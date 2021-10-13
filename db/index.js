@@ -32,12 +32,16 @@ const getAllPosts = async () => {
 
 const getPostsByUser = async (userId) => {
   try {
-    const { rows } = await client.query(`
-        SELECT * FROM posts
+    const { rows:postIds } = await client.query(`
+        SELECT id FROM posts
         WHERE "authorId"=${userId};
         `);
 
-    return rows;
+        const posts = await Promise.all(postIds.map(
+            post=>getPostById(post.id)
+        ))
+
+    return posts;
   } catch (error) {
     throw error;
   }
@@ -203,6 +207,24 @@ const createTags= async tagList=>{
     if (!tagList.length) return
 
 
+}
+
+const getPostsByTagName = async tagName=>{
+    try {
+        const {rows:postIds}= await client.query(`
+        SELECT posts.id
+        FROM posts
+        JOIN post_tags ON posts.id=post_tags."postId"
+        JOIN tags ON tags.id=post_tags."tagId"
+        WHERE tags.name=$1;
+        `, [tagName])
+
+        return await Promise.all(postIds.map(
+            post=>getPostById(post.id)
+        ))
+    } catch (error) {
+        
+    }
 }
 
 module.exports = {
