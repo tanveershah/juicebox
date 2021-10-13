@@ -7,7 +7,8 @@ const {
   createPost,
   updatePost,
   getAllPosts,
-  getPostsByUser,
+  getALLTags,
+  getPostsByTagName,
 } = require("./index");
 
 const createInitialUser = async () => {
@@ -51,18 +52,21 @@ const createInitialPosts = async () => {
       title: "First Post",
       content:
         "This is my first post. I hope I love writing blogs as much as I love writing them.",
+      tags: ["#gold", "#lifeisgood"],
     });
 
     await createPost({
       authorId: sandra.id,
       title: "How does this work?",
       content: "Seriously, does this even do anything?",
+      tags: ["#wow", "#bestday"],
     });
 
     await createPost({
       authorId: glamgal.id,
       title: "Living the Glam Life",
       content: "Do you even? I swear that half of you are posing.",
+      tags: ["#wow", "#bestday", "#herewegoagain"],
     });
     console.log("Finished creating posts!");
   } catch (error) {
@@ -117,8 +121,9 @@ async function createTables() {
         );
 
         CREATE TABLE post_tags(
-            "postId" INTEGER REFERENCES posts(id) UNIQUE,
-            "tagId" INTEGER REFERENCES tags(id) UNIQUE
+            "postId" INTEGER REFERENCES posts(id),
+            "tagId" INTEGER REFERENCES tags(id),
+            UNIQUE ("postId", "tagId")
         );
       `);
 
@@ -169,9 +174,23 @@ async function testDB() {
     });
     console.log("Result:", updatePostResult);
 
+    console.log("Calling updatePost on posts[1], only updating tags");
+    const updatePostTagsResult = await updatePost(posts[1].id, {
+      tags: ["#wow", "#bestday"],
+    });
+    console.log("Result:", updatePostTagsResult);
+
     console.log("Calling getUserById with 1");
     const albert = await getUserById(1);
     console.log("Result:", albert);
+
+    console.log("Calling getAllTags");
+    const allTags = await getAllTags();
+    console.log("Result:", allTags);
+
+    console.log("Calling getPostsByTagName with #happy");
+    const postsWithHappy = await getPostsByTagName("#happy");
+    console.log("Result:", postsWithHappy);
 
     console.log("Finished database tests!");
   } catch (error) {
