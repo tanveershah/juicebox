@@ -134,10 +134,10 @@ const updateUser = async (id, fields = {}) => {
 const updatePost = async (postId, fields = {}) => {
   const { tags } = fields;
   delete fields.tags;
-
-  const setString = Object.keys(fields)
+console.log(fields, 'fffffff')
+  const setString = Object.keys(fields)?Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(", ");
+    .join(", "):null;
 
   try {
     if (setString.length) {
@@ -155,7 +155,7 @@ const updatePost = async (postId, fields = {}) => {
     }
 
     const tagList = createTags(tags);
-    const tagListIdString = tagList.map((tag) => `${tag.id}`).join(", ");
+    const tagListIdString = tagList.length? tagList.map((tag) => `${tag.id}`).join(", "):null;
 
     await client.query(
       `
@@ -266,11 +266,11 @@ const createPostTag = async (postId, tagId) => {
 
 const addTagsToPost = async (postId, tagList) => {
   try {
-    const createPostTagPromises = tagList.map((tag) =>
+    const createPostTagPromises = tagList.length?tagList.map((tag) =>
       createPostTag(postId, tag.id)
-    );
+    ):null;
 
-    await Promise.all(createPostTagPromises);
+    if(createPostTagPromises) await Promise.all(createPostTagPromises);
 
     return await getPostById(postId);
   } catch (error) {
@@ -297,7 +297,7 @@ const getPostsByTagName = async (tagName) => {
   }
 };
 
-const getALLTags = async () => {
+const getAllTags = async () => {
   try {
     const { rows } = await client.query(`
         SELECT * FROM tags;
@@ -321,7 +321,7 @@ module.exports = {
   getPostsByUser,
   getPostsByTagName,
   createTags,
-  getALLTags,
+  getAllTags,
   createPostTag,
   addTagsToPost,
 };

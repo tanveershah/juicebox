@@ -7,7 +7,7 @@ const {
   createPost,
   updatePost,
   getAllPosts,
-  getALLTags,
+  getAllTags,
   getPostsByTagName,
 } = require("./index");
 
@@ -176,7 +176,7 @@ async function testDB() {
 
     console.log("Calling updatePost on posts[1], only updating tags");
     const updatePostTagsResult = await updatePost(posts[1].id, {
-      tags: ["#wow", "#bestday"],
+      tags: ["#newtag", "#anothertag"],
     });
     console.log("Result:", updatePostTagsResult);
 
