@@ -272,7 +272,19 @@ const getPostsByTagName = async tagName=>{
             post=>getPostById(post.id)
         ))
     } catch (error) {
-        
+        throw error
+    }
+}
+
+const getALLTags=async()=>{
+    try {
+        const {rows}= await client.query(`
+        SELECT * FROM tags;
+        `)
+
+        return {rows}
+    } catch (error) {
+        throw error
     }
 }
 
@@ -285,5 +297,10 @@ module.exports = {
   getAllPosts,
   updatePost,
   getUserById,
-  getPostsByUser
+  getPostsByUser,
+  getPostsByTagName,
+  createTags,
+  getALLTags,
+  createPostTag,
+  addTagsToPost
 };
