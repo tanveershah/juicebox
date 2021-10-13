@@ -232,6 +232,18 @@ try {
 }
 }
 
+const createPostTag=async (postId, tagId)=>{
+    try {
+        await client.query(`
+        INSERT INTO post_tags ("postId", "tagId")
+        VALUES ($1, $2)
+        ON CONFLICT ("postId", "tagId") DO NOTHING;
+        `, [postId, tagId])
+    } catch (error) {
+        throw error
+    }
+}
+
 const getPostsByTagName = async tagName=>{
     try {
         const {rows:postIds}= await client.query(`
