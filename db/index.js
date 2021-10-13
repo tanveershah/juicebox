@@ -244,6 +244,20 @@ const createPostTag=async (postId, tagId)=>{
     }
 }
 
+const addTagsToPost=async (postId, tagList)=>{
+    try {
+        const createPostTagPromises=tagList.map(
+            tag=>createPostTag(postId, tag.id)
+        )
+
+        await Promise.all(createPostTagPromises)
+
+        return await getPostById(postId)
+    } catch (error) {
+        throw error
+    }
+}
+
 const getPostsByTagName = async tagName=>{
     try {
         const {rows:postIds}= await client.query(`
