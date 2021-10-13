@@ -2,6 +2,9 @@ const PORT = 3000
 const express = require('express')
 const server = express()
 
+const {client} = require('./db')
+client.connect()
+
 const morgan = require('morgan')
 server.use(morgan('dev'))
 
