@@ -303,7 +303,7 @@ const getAllTags = async () => {
         SELECT * FROM tags;
         `);
 
-    return { rows };
+    return rows ;
   } catch (error) {
     throw error;
   }
