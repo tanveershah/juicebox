@@ -206,7 +206,30 @@ const getPostById=async postId=>{
 const createTags= async tagList=>{
     if (!tagList.length) return
 
+const valuesStringInsert = tagList.map(
+    (_,index)=>`$${index +1}`
+).join('), (')
 
+const valuesStringSelect = tagList.map(
+    (_, index)=> `$${index+1}`
+).join(', ')
+
+try {
+    await client.query(`
+    INSERT INTO tags(name)
+    VALUES(${valuesStringInsert}) 
+    ON CONFLICT(name) DO NOTHING;
+    `, tagList)
+
+    const {rows} = await client.query(`
+   SELECT * FROM tags
+   WHERE name IN (${valuesStringSelect}) 
+    `, tagList)
+
+    return rows
+} catch (error) {
+    throw error
+}
 }
 
 const getPostsByTagName = async tagName=>{
