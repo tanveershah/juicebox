@@ -131,13 +131,33 @@ const updateUser = async (id, fields = {}) => {
   }
 };
 
+const getUserByUsername = async (username) => {
+  try {
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      SELECT * FROM users
+      WHERE username=$1;
+    `,
+      [username]
+    );
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
 const updatePost = async (postId, fields = {}) => {
   const { tags } = fields;
   delete fields.tags;
-console.log(fields, 'fffffff')
-  const setString = Object.keys(fields)?Object.keys(fields)
-    .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(", "):null;
+  console.log(fields, "fffffff");
+  const setString = Object.keys(fields)
+    ? Object.keys(fields)
+        .map((key, index) => `"${key}"=$${index + 1}`)
+        .join(", ")
+    : null;
 
   try {
     if (setString.length) {
@@ -155,7 +175,9 @@ console.log(fields, 'fffffff')
     }
 
     const tagList = createTags(tags);
-    const tagListIdString = tagList.length? tagList.map((tag) => `${tag.id}`).join(", "):null;
+    const tagListIdString = tagList.length
+      ? tagList.map((tag) => `${tag.id}`).join(", ")
+      : null;
 
     await client.query(
       `
@@ -266,11 +288,11 @@ const createPostTag = async (postId, tagId) => {
 
 const addTagsToPost = async (postId, tagList) => {
   try {
-    const createPostTagPromises = tagList.length?tagList.map((tag) =>
-      createPostTag(postId, tag.id)
-    ):null;
+    const createPostTagPromises = tagList.length
+      ? tagList.map((tag) => createPostTag(postId, tag.id))
+      : null;
 
-    if(createPostTagPromises) await Promise.all(createPostTagPromises);
+    if (createPostTagPromises) await Promise.all(createPostTagPromises);
 
     return await getPostById(postId);
   } catch (error) {
@@ -303,7 +325,7 @@ const getAllTags = async () => {
         SELECT * FROM tags;
         `);
 
-    return rows ;
+    return rows;
   } catch (error) {
     throw error;
   }
@@ -318,6 +340,7 @@ module.exports = {
   getAllPosts,
   updatePost,
   getUserById,
+  getUserByUsername,
   getPostsByUser,
   getPostsByTagName,
   createTags,
