@@ -339,6 +339,7 @@ module.exports = {
   createPost,
   getAllPosts,
   updatePost,
+  getPostById,
   getUserById,
   getUserByUsername,
   getPostsByUser,
